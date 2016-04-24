@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,6 +83,8 @@ public class ServerRunner implements ActionListener {
 			logger.log(Level.SEVERE, Utility.getStackTrace(e));
 		} catch (UnsupportedEncodingException e) {
 			logger.log(Level.SEVERE, "Shutting down");
+			logger.log(Level.SEVERE, Utility.getStackTrace(e));
+		} catch (Exception e) {
 			logger.log(Level.SEVERE, Utility.getStackTrace(e));
 		}
 	}

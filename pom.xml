@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>kn</groupId>
 	<artifactId>simpleserver</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>gui</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.simpleframework</groupId>
@@ -12,8 +12,30 @@
 		</dependency>
 	</dependencies>
 
-	<build>	
+	<build>
+		<resources>
+			<resource>
+				<!-- keep configuration and server properties in resources folder alongside 
+					jar dir -->
+				<directory>src/main/resources/resources</directory>
+				<targetPath>../resources</targetPath>
+				<includes>
+					<include>server_icon.png</include>
+					<include>server.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<!-- keep logging.properties in same place as jar -->
+				<directory>src/main/resources</directory>
+				<targetPath>..</targetPath>
+				<includes>
+					<include>logging.properties</include>
+				</includes>
+			</resource>
+		</resources>
+
 		<sourceDirectory>src</sourceDirectory>
+
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -23,6 +45,40 @@
 					<target />
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>kn.server.ServerRunner</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>.</Class-Path>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
