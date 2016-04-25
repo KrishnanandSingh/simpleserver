@@ -49,8 +49,7 @@ public class SimpleServer implements Container {
 	}
 
 	public synchronized void start() throws Exception {
-		Container reqHandler = new SimpleServer();
-		SocketProcessor server = new ContainerSocketProcessor(reqHandler);
+		SocketProcessor server = new ContainerSocketProcessor(this);
 		CONNECTION = new SocketConnection(server);
 		int SERVER_PORT = Integer.parseInt(ServerConfig.getString("Server.port"));
 		SocketAddress address = new InetSocketAddress(SERVER_PORT);

@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +30,14 @@ public class ServerRunner implements ActionListener {
 	private static SimpleServer simpleServer;
 	public MenuItem startItem = null;
 	public MenuItem stopItem = null;
+
+	public static SimpleServer getSimpleServer() {
+		return simpleServer;
+	}
+
+	public static void setSimpleServer(SimpleServer simpleServer) {
+		ServerRunner.simpleServer = simpleServer;
+	}
 
 	MenuItem getStartItem() {
 		return startItem;
@@ -65,19 +72,9 @@ public class ServerRunner implements ActionListener {
 			}
 		}
 		ServerRunner serverRunner = new ServerRunner();
+		simpleServer = new SimpleServer();
 		try {
-			if (!SystemTray.isSupported()) {
-				logger.log(Level.WARNING, "SystemTray is not supported on this platform");
-				logger.log(Level.WARNING, "Starting in non tray mode");
-				serverRunner.startUpNTmode();
-			} else {
-				if (!ntMode) {
-					serverRunner.startUpTrayMode();
-				} else {
-					serverRunner.startUpNTmode();
-				}
-				addServerToShutdownHook();
-			}
+			serverRunner.startUpServer(ntMode);
 		} catch (AWTException e) {
 			logger.log(Level.SEVERE, "Shutting down");
 			logger.log(Level.SEVERE, Utility.getStackTrace(e));
@@ -89,8 +86,22 @@ public class ServerRunner implements ActionListener {
 		}
 	}
 
+	public void startUpServer(boolean ntMode) throws UnsupportedEncodingException, AWTException {
+		if (!SystemTray.isSupported()) {
+			logger.log(Level.WARNING, "SystemTray is not supported on this platform");
+			logger.log(Level.WARNING, "Starting in non tray mode");
+			this.startUpNTmode();
+		} else {
+			if (!ntMode) {
+				this.startUpTrayMode();
+			} else {
+				this.startUpNTmode();
+			}
+		}
+		addServerToShutdownHook();
+	}
+
 	private void startUpNTmode() {
-		final SimpleServer simpleServer = new SimpleServer();
 		Runnable runner = new Runnable() {
 			public void run() {
 				String pathToFileOnDisk = ServerConfig.getString("Server.ntIcon");
@@ -109,7 +120,6 @@ public class ServerRunner implements ActionListener {
 		MenuItem exit = new MenuItem("Exit");
 
 		exit.addActionListener(this);
-		simpleServer = new SimpleServer();
 		ActionListener startListener = new StartActionListner(simpleServer, this);
 		startItem.addActionListener(startListener);
 		ActionListener stopListener = new StopActionListner(simpleServer, this);
