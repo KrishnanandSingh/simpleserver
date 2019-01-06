@@ -38,7 +38,7 @@ import kn.server.util.ServerConfig;
 public class InbuiltHttpServer {
 	private static Logger LOGGER = LoggerFactory.getLogger(InbuiltHttpServer.class);
 	private static HttpServer httpServer;
-	private static String CONTEXT_PATH = "/mobiWatchAgent/android";
+	private static String CONTEXT_PATH = "/mysite/path";
 
 	/**
 	 * @return the cONTEXT_PATH
@@ -72,16 +72,16 @@ public class InbuiltHttpServer {
 			// binding this thread pool with server
 			httpServer.setExecutor(serverThreads);
 			// create a context
-			HttpContext androidContext = httpServer.createContext(CONTEXT_PATH);
+			HttpContext context = httpServer.createContext(CONTEXT_PATH);
 
-			InbuiltHttpServer mobiWatchHttpServer = new InbuiltHttpServer();
+			InbuiltHttpServer httpServer = new InbuiltHttpServer();
 			// set handler to this context
-			HttpHandler mobiWatchHandler = new FrontController();
-			androidContext.setHandler(mobiWatchHandler);
+			HttpHandler handler = new FrontController();
+			context.setHandler(handler);
 
 			// set filter to this context
-			Filter filter = mobiWatchHttpServer.new RequestFilter();
-			androidContext.getFilters().add(filter);
+			Filter filter = httpServer.new RequestFilter();
+			context.getFilters().add(filter);
 
 			httpServer.start();
 
