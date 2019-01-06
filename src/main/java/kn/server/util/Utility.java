@@ -13,7 +13,7 @@ import java.io.StringWriter;
 public class Utility {
 
 	/**
-	 * prints stacktrace to string an returns that
+	 * prints stacktrace to string and returns that
 	 * @param e
 	 * @return String 
 	 */

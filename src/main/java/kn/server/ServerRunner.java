@@ -11,6 +11,7 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -130,14 +131,19 @@ public class ServerRunner implements ActionListener {
 		popMenu.add(exit);
 		this.stopItem.setEnabled(false);
 		String defaultEncoding = System.getProperty("file.encoding");
-		String icon_path = null;
-		icon_path = URLDecoder.decode(
-				getClass().getClassLoader().getResource(ServerConfig.getString("Server.trayicon")).getPath(),
-				defaultEncoding);
-		Image img = Toolkit.getDefaultToolkit().getImage(icon_path);
-		TrayIcon trayIcon = new TrayIcon(img, ServerConfig.getString("Server.name"), popMenu);
-		trayIcon.setImageAutoSize(true);
-		SystemTray.getSystemTray().add(trayIcon);
+		URL icon_path = null;
+		icon_path = getClass().getClassLoader().getResource(ServerConfig.getString("Server.trayicon"));
+		TrayIcon trayIcon = null;
+		if (icon_path != null) {
+			logger.info("Fetching tray icon from: "+icon_path.getPath());
+			Image img = Toolkit.getDefaultToolkit().getImage(icon_path);
+			trayIcon = new TrayIcon(img, ServerConfig.getString("Server.name"), popMenu);
+			trayIcon.setImageAutoSize(true);
+			SystemTray.getSystemTray().add(trayIcon);
+		}else{
+			// icon not found
+			logger.severe("Icon not found at: "+ServerConfig.getString("Server.trayicon"));
+		}
 	}
 
 	/**
